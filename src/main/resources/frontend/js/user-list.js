@@ -20,6 +20,19 @@ const fetchAllUser = () => {
     })
 }
 
+const deleteEntry = (id) => {
+    fetch(`${LOCALHOST_URL}/user/${id}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': getBearer()
+        }
+    }).then(() => {
+        fetchAllUser();
+    });
+}
+
+
 const renderCategories = () => {
     const display = document.querySelector('#userDisplay');
     display.innerHTML = '';
@@ -29,6 +42,15 @@ const renderCategories = () => {
         row.appendChild(createCell(user.id));
         row.appendChild(createCell(user.username));
         row.appendChild(createCell(user.role));
+
+        let button = document.createElement('input');
+        button.type = 'button';
+        button.value = 'Delete';
+
+        button.onclick = () => deleteEntry(user.id);
+
+        row.appendChild(button);
+
         display.appendChild(row);
     });
 };
