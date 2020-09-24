@@ -1,4 +1,4 @@
-import {getBearer, LOCALHOST_URL, setBearer} from './data.js';
+import {FRONTEND_URL, getBearer, LOCALHOST_URL, setBearer} from './data.js';
 
 const login = (e) => {
     e.preventDefault();
@@ -17,6 +17,7 @@ const login = (e) => {
     }).then((result) => {
         setBearer(result.headers.get("Authorization"));
         console.log(getBearer());
+        window.location.href = FRONTEND_URL + "user-list.html";
     });
 }
 

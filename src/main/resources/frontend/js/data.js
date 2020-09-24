@@ -1,4 +1,5 @@
 export const LOCALHOST_URL = 'http://localhost:8080';
+export const FRONTEND_URL = "http://localhost:63342/webDemo/frontend/html/";
 
 export function setBearer(newBearer) {
     localStorage.removeItem("bearer");

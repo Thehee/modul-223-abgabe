@@ -1,4 +1,4 @@
-import {LOCALHOST_URL} from './data.js';
+import {FRONTEND_URL, LOCALHOST_URL} from './data.js';
 
 const createUser = (e) => {
     e.preventDefault();
@@ -16,7 +16,7 @@ const createUser = (e) => {
         body: JSON.stringify(user)
     }).then((res) => {
         if (res.ok) {
-            console.log("User created");
+            window.location.href = FRONTEND_URL + "login.html";
         } else {
             console.log("There was an error. " + res.status);
         }
