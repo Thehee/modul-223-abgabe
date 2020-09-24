@@ -1,40 +1,40 @@
-import {FRONTEND_URL, getBearer, LOCALHOST_URL} from "./data.js";
+import {getBearer, LOCALHOST_URL} from "./data.js";
 
-let users = [];
+let tags = [];
 
-const fetchAllUser = () => {
+const fetchAllTags = () => {
     if (getBearer() === null) {
         alert("you need to login to access this function");
     }
 
-    fetch(`${LOCALHOST_URL}/user`, {
+    fetch(`${LOCALHOST_URL}/tag`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': getBearer()
         },
-    }).then((userList) => {
-        userList.json().then((userList) => {
-            users = userList;
-            renderUser();
+    }).then((tagList) => {
+        tagList.json().then((tagList) => {
+            tags = tagList;
+            renderTags();
         });
     })
 }
 
-const deleteUser = (id) => {
-    fetch(`${LOCALHOST_URL}/user/${id}`, {
+const deleteTag = (id) => {
+    fetch(`${LOCALHOST_URL}/tag/${id}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': getBearer()
         }
     }).then(() => {
-        fetchAllUser();
+        fetchAllTags();
     });
 }
 
-const getOneUser = (id) => {
-    fetch(`${LOCALHOST_URL}/user/${id}`, {
+const getOneTag = (id) => {
+    fetch(`${LOCALHOST_URL}/tag/${id}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -47,59 +47,59 @@ const getOneUser = (id) => {
     })
 }
 
-const createUser = (user) => {
-    fetch(`${LOCALHOST_URL}/user`, {
+const createTag = (tag) => {
+    fetch(`${LOCALHOST_URL}/tag`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': getBearer()
         },
-        body: JSON.stringify(user)
+        body: JSON.stringify(tag)
     }).then((res) => {
         if (res.ok) {
-            fetchAllUser();
+            fetchAllTags();
         } else {
             console.log("There was an error. " + res.status);
         }
     });
 }
 
-const editUser = (user) => {
-    fetch(`${LOCALHOST_URL}/user`, {
+const editTag = (tag) => {
+    fetch(`${LOCALHOST_URL}/tag`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': getBearer()
         },
-        body: JSON.stringify(user)
+        body: JSON.stringify(tag)
     }).then((res) => {
         if (res.ok) {
             resetForm();
-            fetchAllUser();
+            fetchAllTags();
         } else {
             console.log("There was an error. " + res.status);
         }
     });
 }
 
-const renderUser = () => {
-    const display = document.querySelector('#userDisplay');
+const   renderTags = () => {
+    const display = document.querySelector('#tagDisplay');
     display.innerHTML = '';
 
-    users.forEach((user) => {
+    tags.forEach((tag) => {
         const row = document.createElement('tr');
-        row.appendChild(createCell(user.id));
-        row.appendChild(createCell(user.username));
-        row.appendChild(createCell(user.role));
+        row.appendChild(createCell(tag.id));
+        row.appendChild(createCell(tag.name));
 
         let button = document.createElement('input');
         button.type = 'button';
         button.value = 'Delete';
 
-        button.onclick = () => deleteUser(user.id);
+        button.onclick = () => deleteTag(tag.id);
 
         row.appendChild(button);
 
-        row.onclick = () => getOneUser(user.id);
+        row.onclick = () => getOneTag(tag.id);
 
         display.appendChild(row);
     });
@@ -108,17 +108,18 @@ const renderUser = () => {
 const submitOnClick = (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-    const user = {};
+    const tag = {};
 
-    user['username'] = formData.get('username');
-    user['password'] = formData.get('password');
+    tag['name'] = formData.get('name');
     let id = formData.get('id');
 
+    console.log(tag);
+
     if (id === '' || id === null) {
-        createUser(user)
+        createTag(tag)
     } else {
-        user['id'] = id;
-        editUser(user);
+        tag['id'] = id;
+        editTag(tag);
     }
 }
 
@@ -128,26 +129,24 @@ const createCell = (text) => {
     return cell;
 };
 
-const loadData = (user) => {
-    document.getElementById("username").value = user.username;
-    document.getElementById("password").value = "";
-    document.getElementById("user-id").value = user.id;
+const loadData = (tag) => {
+    document.getElementById("name").value = tag.name;
+    document.getElementById("tag-id").value = tag.id;
     document.getElementById("submit-btn").value = "Update";
     document.getElementById("cancel-btn").style.display = "block";
 }
 
 const resetForm = () => {
-    document.getElementById("username").value = "";
-    document.getElementById("password").value = "";
-    document.getElementById("user-id").value = "";
+    document.getElementById("name").value = "";
+    document.getElementById("tag-id").value = "";
     document.getElementById("submit-btn").value = "save";
     document.getElementById("cancel-btn").style.display = "none";
 }
 
-window.addEventListener('load', () => fetchAllUser());
+window.addEventListener('load', () => fetchAllTags());
 
 document.addEventListener('DOMContentLoaded', () => {
-    const loginForm = document.querySelector('#user-form');
+    const loginForm = document.querySelector('#tag-form');
     loginForm.addEventListener('submit', submitOnClick);
 })
 
