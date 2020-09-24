@@ -1,4 +1,4 @@
-spGRANT ALL PRIVILEGES ON webdemo.* TO 'database_user'@'localhost';ring:
+spring:
   datasource:
     driverClassName: com.mysql.jdbc.Driver
     url: jdbc:mysql://localhost:3306/webdemo?serverTimezone=UTC
