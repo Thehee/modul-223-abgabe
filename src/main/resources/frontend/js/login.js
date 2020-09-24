@@ -1,8 +1,7 @@
-import {LOCALHOST_URL, bearer, setBearer} from './data.js';
+import {getBearer, LOCALHOST_URL, setBearer} from './data.js';
 
 const login = (e) => {
     e.preventDefault();
-
     const formData = new FormData(e.target);
     const loginData = {};
 
@@ -12,28 +11,13 @@ const login = (e) => {
     fetch(`${LOCALHOST_URL}/login`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify(loginData)
     }).then((result) => {
         setBearer(result.headers.get("Authorization"));
-        console.log(bearer);
-        fetchAllUser();
+        console.log(getBearer());
     });
-}
-
-const fetchAllUser = () => {
-    fetch(`${LOCALHOST_URL}/user`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': bearer
-        },
-    }).then((userList) => {
-        userList.json().then((userList) => {
-            console.table(userList);
-        });
-    })
 }
 
 document.addEventListener('DOMContentLoaded', () => {
