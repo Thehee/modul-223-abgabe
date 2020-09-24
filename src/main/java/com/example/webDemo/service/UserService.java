@@ -2,9 +2,12 @@ package com.example.webDemo.service;
 
 import com.example.webDemo.db.UserRepository;
 import com.example.webDemo.db.dbo.DemoUser;
+import com.example.webDemo.db.dbo.Role;
 import com.example.webDemo.security.DemoWebSecurityConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -13,9 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
-
-import static java.util.Collections.emptyList;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -37,6 +39,12 @@ public class UserService implements UserDetailsService {
   }
 
   public void createUser(DemoUser user) {
+
+    if (userRepository.findAll().isEmpty()) {
+      user.setRole(Role.ADMIN);
+    } else {
+      user.setRole(Role.USER);
+    }
 
     validateAndEncode(user);
 
@@ -72,7 +80,9 @@ public class UserService implements UserDetailsService {
     DemoUser user = userRepository.findByUsername(username)
         .orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST, "There is no user with following username: " + username));
 
-    // Roles can be added later for more layers.
-    return new User(user.getUsername(), user.getPassword(), emptyList());
+    List<GrantedAuthority> roles = new ArrayList();
+    roles.add(new SimpleGrantedAuthority(user.getRole().name()));
+
+    return new User(user.getUsername(), user.getPassword(), roles);
   }
 }

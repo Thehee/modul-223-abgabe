@@ -16,7 +16,6 @@ import javax.persistence.Id;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-// @Builder for converters if you have dbos and msg objects.
 @Entity
 public class DemoUser {
 
@@ -29,4 +28,7 @@ public class DemoUser {
 
   @Column
   private String password;
+
+  @Column
+  private Role role;
 }
