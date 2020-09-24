@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpClientErrorException;
 
 import javax.transaction.Transactional;
@@ -57,9 +58,19 @@ public class UserService implements UserDetailsService {
 
   @Transactional
   public void editUser(DemoUser user) {
-    userRepository.findById(user.getId())
+    DemoUser originalUser = userRepository.findById(user.getId())
         .orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST,
             "There is no user with following id: " + user.getId()));
+
+    if (StringUtils.isEmpty(user.getPassword())) {
+      user.setPassword(originalUser.getPassword());
+    }
+
+    if (StringUtils.isEmpty(user.getUsername())) {
+      user.setUsername(originalUser.getUsername());
+    }
+
+    user.setRole(originalUser.getRole());
 
     validateAndEncode(user);
 

@@ -1,0 +1,22 @@
+table tbody tr:hover {
+    background-color: #ececec;
+    cursor: pointer;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+#user-form {
+    display: flex;
+    flex-direction: column;
+}
+
+#user-form div, #user-form label {
+    width: 100px;
+    padding: 10px 0;
+}
+
+#user-form input[type=button], #user-form input[type=submit] {
+    padding: 10px 20px;
+}

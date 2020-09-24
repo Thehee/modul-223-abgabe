@@ -3,8 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <title>User List</title>
+    <link rel="stylesheet" type="text/css" href="../css/user-list.css">
 </head>
 <body>
+<form id="user-form">
+    <input type="hidden" name="id" id="user-id">
+    <label>
+        Username:
+        <input type="text" name="username" id="username">
+    </label>
+    <label>
+        Password:
+        <input type="password" name="password" id="password">
+    </label>
+    <div>
+        <input type="submit" value="Send" id="submit-btn">
+    </div>
+    <div>
+        <input type="button" value="cancel" id="cancel-btn" style="display: none">
+    </div>
+</form>
+
 <div class="section">
     <table>
         <thead>

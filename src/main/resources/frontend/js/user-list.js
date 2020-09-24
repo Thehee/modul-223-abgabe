@@ -1,9 +1,8 @@
-import {getBearer, LOCALHOST_URL} from "./data.js";
+import {FRONTEND_URL, getBearer, LOCALHOST_URL} from "./data.js";
 
 let users = [];
 
 const fetchAllUser = () => {
-
     if (getBearer() === null) {
         alert("you need to login to access this function");
     }
@@ -34,6 +33,53 @@ const deleteEntry = (id) => {
     });
 }
 
+const getOneUser = (id) => {
+    fetch(`${LOCALHOST_URL}/user/${id}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': getBearer()
+        }
+    }).then((result) => {
+        result.json().then((result) => {
+            loadData(result);
+        })
+    })
+}
+
+const createUser = (user) => {
+    fetch(`${LOCALHOST_URL}/user`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(user)
+    }).then((res) => {
+        if (res.ok) {
+            fetchAllUser();
+        } else {
+            console.log("There was an error. " + res.status);
+        }
+    });
+}
+
+const editUser = (user) => {
+    fetch(`${LOCALHOST_URL}/user`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': getBearer()
+        },
+        body: JSON.stringify(user)
+    }).then((res) => {
+        if (res.ok) {
+            resetForm();
+            fetchAllUser();
+        } else {
+            console.log("There was an error. " + res.status);
+        }
+    });
+}
 
 const renderCategories = () => {
     const display = document.querySelector('#userDisplay');
@@ -53,9 +99,28 @@ const renderCategories = () => {
 
         row.appendChild(button);
 
+        row.onclick = () => getOneUser(user.id);
+
         display.appendChild(row);
     });
 };
+
+const submitOnClick = (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const user = {};
+
+    user['username'] = formData.get('username');
+    user['password'] = formData.get('password');
+    let id = formData.get('id');
+
+    if (id === '' || id === null) {
+        createUser(user)
+    } else {
+        user['id'] = id;
+        editUser(user);
+    }
+}
 
 const createCell = (text) => {
     const cell = document.createElement('td');
@@ -63,4 +128,27 @@ const createCell = (text) => {
     return cell;
 };
 
+const loadData = (user) => {
+    document.getElementById("username").value = user.username;
+    document.getElementById("password").value = "";
+    document.getElementById("user-id").value = user.id;
+    document.getElementById("submit-btn").value = "Update";
+    document.getElementById("cancel-btn").style.display = "block";
+}
+
+const resetForm = () => {
+    document.getElementById("username").value = "";
+    document.getElementById("password").value = "";
+    document.getElementById("user-id").value = "";
+    document.getElementById("submit-btn").value = "save";
+    document.getElementById("cancel-btn").style.display = "none";
+}
+
 window.addEventListener('load', () => fetchAllUser());
+
+document.addEventListener('DOMContentLoaded', () => {
+    const loginForm = document.querySelector('#user-form');
+    loginForm.addEventListener('submit', submitOnClick);
+})
+
+document.getElementById('cancel-btn').addEventListener('click', resetForm);
