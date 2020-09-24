@@ -56,6 +56,7 @@ const createUser = (user) => {
         body: JSON.stringify(user)
     }).then((res) => {
         if (res.ok) {
+            resetForm();
             fetchAllUser();
         } else {
             console.log("There was an error. " + res.status);
@@ -95,8 +96,10 @@ const renderUser = () => {
         button.type = 'button';
         button.value = 'Delete';
 
-        button.onclick = () => deleteUser(user.id);
-
+        button.onclick = (e) =>  {
+            e.stopPropagation();
+            deleteUser(user.id);
+        }
         row.appendChild(button);
 
         row.onclick = () => getOneUser(user.id);
@@ -140,7 +143,7 @@ const resetForm = () => {
     document.getElementById("username").value = "";
     document.getElementById("password").value = "";
     document.getElementById("user-id").value = "";
-    document.getElementById("submit-btn").value = "save";
+    document.getElementById("submit-btn").value = "Send";
     document.getElementById("cancel-btn").style.display = "none";
 }
 

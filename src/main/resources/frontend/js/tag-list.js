@@ -57,6 +57,7 @@ const createTag = (tag) => {
         body: JSON.stringify(tag)
     }).then((res) => {
         if (res.ok) {
+            resetForm();
             fetchAllTags();
         } else {
             console.log("There was an error. " + res.status);
@@ -82,7 +83,7 @@ const editTag = (tag) => {
     });
 }
 
-const   renderTags = () => {
+const renderTags = () => {
     const display = document.querySelector('#tagDisplay');
     display.innerHTML = '';
 
@@ -95,7 +96,10 @@ const   renderTags = () => {
         button.type = 'button';
         button.value = 'Delete';
 
-        button.onclick = () => deleteTag(tag.id);
+        button.onclick = (e) =>  {
+            e.stopPropagation();
+            deleteTag(tag.id);
+        }
 
         row.appendChild(button);
 
@@ -139,7 +143,7 @@ const loadData = (tag) => {
 const resetForm = () => {
     document.getElementById("name").value = "";
     document.getElementById("tag-id").value = "";
-    document.getElementById("submit-btn").value = "save";
+    document.getElementById("submit-btn").value = "Send";
     document.getElementById("cancel-btn").style.display = "none";
 }
 
